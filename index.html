@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b2545">
+<title>Part 107 Prep — Drone License Quiz</title>
+<style>
+  :root {
+    --navy: #0b2545; --blue: #1d6fd8; --sky: #e8f1fc; --ink: #1b1f24; --muted: #5b6573;
+    --line: #dfe5ec; --bg: #f6f8fb; --card: #fff; --good: #1f8a4c; --goodbg: #e7f6ed;
+    --bad: #c23b2b; --badbg: #fcebe8; --amber: #b7791f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #e8ecf1; --muted: #9aa5b3; --line: #2b3440; --bg: #11161c; --card: #1a2028;
+      --sky: #1c2a3d; --goodbg: #15301f; --badbg: #3a1d19; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.45; -webkit-font-smoothing: antialiased; }
+  header { background: var(--navy); color: #fff; padding: 14px 18px calc(14px) ; padding-top: max(14px, env(safe-area-inset-top));
+    display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 5; }
+  header h1 { font-size: 17px; margin: 0; font-weight: 650; flex: 1; letter-spacing: .2px; }
+  header button { background: rgba(255,255,255,.12); color: #fff; border: 0; border-radius: 8px;
+    padding: 7px 12px; font-size: 14px; cursor: pointer; }
+  main { max-width: 640px; margin: 0 auto; padding: 18px 16px 60px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+  .hero { background: linear-gradient(135deg, #0b2545, #1d4e89); color: #fff; border: 0; }
+  .hero p { margin: 4px 0 0; opacity: .85; font-size: 14px; }
+  .hero .big { font-size: 22px; font-weight: 700; }
+  .countdown { margin-top: 12px; display: inline-block; background: rgba(255,255,255,.14); padding: 6px 10px; border-radius: 8px; font-size: 13px; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 22px 4px 10px; }
+  .btn { display: block; width: 100%; text-align: left; background: var(--card); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;
+    font-size: 16px; cursor: pointer; transition: border-color .15s; }
+  .btn:hover { border-color: var(--blue); }
+  .btn small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); text-align: center; font-weight: 600; }
+  .btn.primary small { color: rgba(255,255,255,.8); }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .bar { height: 7px; background: var(--line); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .bar > div { height: 100%; background: var(--blue); border-radius: 4px; transition: width .3s; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; color: var(--blue); background: var(--sky);
+    padding: 3px 8px; border-radius: 6px; }
+  .q { font-size: 18px; font-weight: 600; margin: 12px 0 16px; }
+  .opt { display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; background: var(--card);
+    color: var(--ink); border: 1.5px solid var(--line); border-radius: 12px; padding: 13px 14px; margin-bottom: 10px;
+    font-size: 16px; cursor: pointer; }
+  .opt .k { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--line);
+    display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--muted); }
+  .opt.sel { border-color: var(--blue); } .opt.sel .k { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .opt.right { border-color: var(--good); background: var(--goodbg); } .opt.right .k { background: var(--good); border-color: var(--good); color: #fff; }
+  .opt.wrong { border-color: var(--bad); background: var(--badbg); } .opt.wrong .k { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .opt:disabled { cursor: default; }
+  .explain { border-radius: 12px; padding: 14px; margin: 6px 0 14px; font-size: 15px; }
+  .explain.good { background: var(--goodbg); } .explain.bad { background: var(--badbg); }
+  .explain b { display: block; margin-bottom: 4px; }
+  .timer { font-variant-numeric: tabular-nums; font-weight: 700; }
+  .timer.low { color: var(--amber); }
+  .score { font-size: 46px; font-weight: 800; text-align: center; margin: 6px 0 0; }
+  .pass { color: var(--good); } .fail { color: var(--bad); }
+  .center { text-align: center; }
+  .grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .dot { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--line); background: var(--card);
+    font-size: 12px; color: var(--ink); cursor: pointer; }
+  .dot.done { background: var(--sky); border-color: var(--blue); }
+  .dot.cur { outline: 2px solid var(--blue); }
+  .dot.r { background: var(--goodbg); border-color: var(--good); } .dot.w { background: var(--badbg); border-color: var(--bad); }
+  .nav { display: flex; gap: 10px; margin-top: 6px; }
+  .nav .btn { text-align: center; margin: 0; }
+  .empty { text-align: center; color: var(--muted); padding: 30px 10px; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>✈️ Part 107 Prep</h1>
+  <button id="homeBtn" onclick="go('home')" hidden>Home</button>
+</header>
+<main id="app"></main>
+
+<script src="questions.js"></script>
+<script>
+// ---------- Settings ----------
+const EXAM_DATE = new Date("2026-12-04T14:30:00-05:00"); // change to your exam date/time
+const EXAM_SIZE = 60, EXAM_MINUTES = 120, PASS_PCT = 70;
+
+// ---------- Storage (safe) ----------
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+QUESTIONS.forEach((q, i) => q.id = i);
+let stats = store.get("p107_stats", {});      // id -> {c: correct count, w: wrong count, last: 1/0}
+let history = store.get("p107_exams", []);    // [{date, score, total}]
+
+function record(q, ok) {
+  const s = stats[q.id] || { c: 0, w: 0, last: 0 };
+  ok ? s.c++ : s.w++; s.last = ok ? 1 : 0;
+  stats[q.id] = s; store.set("p107_stats", stats);
+}
+
+// ---------- Helpers ----------
+const $app = document.getElementById("app");
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const L = ["A", "B", "C", "D"];
+function prep(q) { // shuffled option order, remembering the correct one
+  const order = shuffle(q.o.map((_, i) => i));
+  return { q, order, correct: order.indexOf(q.a), pick: null };
+}
+
+let session = null, timerId = null;
+
+function go(view, arg) {
+  clearInterval(timerId);
+  document.getElementById("homeBtn").hidden = view === "home";
+  window.scrollTo(0, 0);
+  ({ home, practiceMenu, practice: startPractice, exam: startExam, missed: startMissed, progress })[view](arg);
+}
+
+// ---------- Home ----------
+function home() {
+  const seen = Object.keys(stats).length;
+  const days = Math.ceil((EXAM_DATE - new Date()) / 86400000);
+  const last = history[history.length - 1];
+  const missedCount = QUESTIONS.filter(q => stats[q.id] && stats[q.id].last === 0).length;
+  $app.innerHTML = `
+    <div class="card hero">
+      <div class="big">FAA Remote Pilot (UAG)</div>
+      <p>${QUESTIONS.length} questions · 60 on the real test · 70% to pass</p>
+      ${days > 0 ? `<div class="countdown">📅 Exam in ${days} day${days === 1 ? "" : "s"}</div>` : ""}
+      <div class="bar" style="background:rgba(255,255,255,.2)"><div style="width:${seen / QUESTIONS.length * 100}%;background:#fff"></div></div>
+      <p>${seen} of ${QUESTIONS.length} questions practiced${last ? ` · Last mock: ${Math.round(last.score / last.total * 100)}%` : ""}</p>
+    </div>
+    <h2>Study</h2>
+    <button class="btn" onclick="go('practiceMenu')">📘 Practice by topic<small>Instant feedback and explanation after each question</small></button>
+    <button class="btn" onclick="go('missed')">🔁 Review missed (${missedCount})<small>Questions you got wrong last time</small></button>
+    <h2>Test yourself</h2>
+    <button class="btn primary" onclick="go('exam')">⏱️ Mock exam<small>${Math.min(EXAM_SIZE, QUESTIONS.length)} questions · ${EXAM_MINUTES} minutes · just like test day</small></button>
+    <button class="btn" onclick="go('progress')">📊 My progress<small>Scores by topic and mock exam history</small></button>
+    <footer>Practice questions for study only. Always confirm rules with official FAA materials.</footer>`;
+}
+
+// ---------- Practice ----------
+function practiceMenu() {
+  const items = Object.entries(TOPICS).map(([k, name]) => {
+    const n = QUESTIONS.filter(q => q.t === k).length;
+    return `<button class="btn" onclick="go('practice','${k}')">${name}<small>${n} questions</small></button>`;
+  }).join("");
+  $app.innerHTML = `<h2>Choose a topic</h2>
+    <button class="btn primary" onclick="go('practice','ALL')">All topics (shuffled)<small>${QUESTIONS.length} questions</small></button>${items}`;
+}
+
+function startPractice(topic) {
+  const pool = topic === "ALL" ? QUESTIONS : QUESTIONS.filter(q => q.t === topic);
+  session = { mode: "practice", title: topic === "ALL" ? "All topics" : TOPICS[topic], items: shuffle(pool).map(prep), i: 0, right: 0 };
+  renderPractice();
+}
+
+function startMissed() {
+  const pool = QUESTIONS.filter(q => stats[q.id] && stats[q.id].last === 0);
+  if (!pool.length) {
+    $app.innerHTML = `<div class="card empty">🎉 No missed questions right now.<br>Practice or take a mock exam first.</div>
+      <button class="btn primary" onclick="go('practiceMenu')">Practice by topic</button>`;
+    return;
+  }
+  session = { mode: "practice", title: "Missed questions", items: shuffle(pool).map(prep), i: 0, right: 0 };
+  renderPractice();
+}
+
+function renderPractice() {
+  const s = session, it = s.items[s.i], q = it.q, answered = it.pick !== null;
+  const opts = it.order.map((oi, idx) => {
+    let cls = "opt";
+    if (answered) { if (idx === it.correct) cls += " right"; else if (idx === it.pick) cls += " wrong"; }
+    return `<button class="${cls}" ${answered ? "disabled" : ""} onclick="answerPractice(${idx})"><span class="k">${L[idx]}</span><span>${esc(q.o[oi])}</span></button>`;
+  }).join("");
+  const ok = it.pick === it.correct;
+  $app.innerHTML = `
+    <div class="row"><span class="tag">${TOPICS[q.t]}</span><span class="meta">${s.i + 1} / ${s.items.length} · ✅ ${s.right}</span></div>
+    <div class="bar"><div style="width:${(s.i + (answered ? 1 : 0)) / s.items.length * 100}%"></div></div>
+    <div class="q">${esc(q.q)}</div>
+    ${opts}
+    ${answered ? `<div class="explain ${ok ? "good" : "bad"}"><b>${ok ? "Correct!" : "Not quite. Answer: " + L[it.correct]}</b>${esc(q.e)}</div>
+      <button class="btn primary" onclick="nextPractice()">${s.i + 1 < s.items.length ? "Next question →" : "See results"}</button>` : ""}`;
+}
+
+function answerPractice(idx) {
+  const it = session.items[session.i];
+  if (it.pick !== null) return;
+  it.pick = idx;
+  const ok = idx === it.correct;
+  if (ok) session.right++;
+  record(it.q, ok);
+  renderPractice();
+}
+
+function nextPractice() {
+  if (session.i + 1 < session.items.length) { session.i++; window.scrollTo(0, 0); renderPractice(); }
+  else {
+    const pct = Math.round(session.right / session.items.length * 100);
+    $app.innerHTML = `<div class="card center"><div class="meta">${esc(session.title)}</div>
+      <div class="score ${pct >= PASS_PCT ? "pass" : "fail"}">${pct}%</div>
+      <p>${session.right} of ${session.items.length} correct</p></div>
+      <button class="btn primary" onclick="go('missed')">Review missed questions</button>
+      <button class="btn" onclick="go('practiceMenu')">Practice another topic</button>`;
+  }
+}
+
+// ---------- Mock exam ----------
+function startExam() {
+  const n = Math.min(EXAM_SIZE, QUESTIONS.length);
+  session = { mode: "exam", items: shuffle(QUESTIONS).slice(0, n).map(prep), i: 0, end: Date.now() + EXAM_MINUTES * 60000, done: false };
+  timerId = setInterval(tick, 1000);
+  renderExam();
+}
+
+function tick() {
+  const left = Math.max(0, session.end - Date.now());
+  const el = document.getElementById("timer");
+  if (el) {
+    const m = Math.floor(left / 60000), s = Math.floor(left % 60000 / 1000);
+    el.textContent = `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    el.classList.toggle("low", left < 600000);
+  }
+  if (left <= 0) finishExam();
+}
+
+function renderExam() {
+  const s = session, it = s.items[s.i], q = it.q;
+  const answeredCount = s.items.filter(x => x.pick !== null).length;
+  const opts = it.order.map((oi, idx) =>
+    `<button class="opt ${it.pick === idx ? "sel" : ""}" onclick="pickExam(${idx})"><span class="k">${L[idx]}</span><span>${esc(q.o[oi])}</span></button>`).join("");
+  const dots = s.items.map((x, i) => `<button class="dot ${x.pick !== null ? "done" : ""} ${i === s.i ? "cur" : ""}" onclick="jumpExam(${i})">${i + 1}</button>`).join("");
+  $app.innerHTML = `
+    <div class="row"><span class="meta">Question ${s.i + 1} of ${s.items.length}</span><span class="timer" id="timer">--:--</span></div>
+    <div class="bar"><div style="width:${answeredCount / s.items.length * 100}%"></div></div>
+    <div class="q">${esc(q.q)}</div>
+    ${opts}
+    <div class="nav">
+      <button class="btn" ${s.i === 0 ? "disabled" : ""} onclick="jumpExam(${s.i - 1})">← Back</button>
+      ${s.i + 1 < s.items.length ? `<button class="btn primary" onclick="jumpExam(${s.i + 1})">Next →</button>`
+        : `<button class="btn primary" onclick="confirmFinish()">Finish</button>`}
+    </div>
+    <div class="card" style="margin-top:16px"><div class="row"><span class="meta">${answeredCount} answered</span>
+      <button class="btn" style="width:auto;margin:0;padding:8px 14px" onclick="confirmFinish()">Submit exam</button></div>
+      <div class="grid">${dots}</div></div>`;
+  tick();
+}
+
+function pickExam(idx) { session.items[session.i].pick = idx; renderExam(); }
+function jumpExam(i) { session.i = i; window.scrollTo(0, 0); renderExam(); }
+function confirmFinish() {
+  const left = session.items.filter(x => x.pick === null).length;
+  const box = document.createElement("div");
+  box.className = "card";
+  box.innerHTML = `<b>Submit exam?</b><p class="meta">${left ? left + " question(s) unanswered and will count as wrong." : "All questions answered."}</p>
+    <div class="nav"><button class="btn" onclick="this.closest('.card').remove()">Keep going</button>
+    <button class="btn primary" onclick="finishExam()">Submit</button></div>`;
+  $app.prepend(box); window.scrollTo(0, 0);
+}
+
+function finishExam() {
+  if (session.done) return;
+  session.done = true; clearInterval(timerId);
+  let right = 0;
+  session.items.forEach(it => { const ok = it.pick === it.correct; if (ok) right++; record(it.q, ok); });
+  history.push({ date: new Date().toISOString(), score: right, total: session.items.length });
+  store.set("p107_exams", history);
+  session.right = right;
+  renderExamResult();
+}
+
+function renderExamResult() {
+  const s = session, pct = Math.round(s.right / s.items.length * 100), pass = pct >= PASS_PCT;
+  const byTopic = {};
+  s.items.forEach(it => { const t = it.q.t; byTopic[t] = byTopic[t] || [0, 0]; byTopic[t][1]++; if (it.pick === it.correct) byTopic[t][0]++; });
+  const topics = Object.entries(byTopic).map(([t, [r, n]]) =>
+    `<div style="margin:10px 0"><div class="row"><span>${TOPICS[t]}</span><span class="meta">${r}/${n}</span></div>
+     <div class="bar"><div style="width:${r / n * 100}%;background:${r / n >= .7 ? "var(--good)" : "var(--bad)"}"></div></div></div>`).join("");
+  const dots = s.items.map((it, i) => `<button class="dot ${it.pick === it.correct ? "r" : "w"}" onclick="reviewExam(${i})">${i + 1}</button>`).join("");
+  $app.innerHTML = `
+    <div class="card center"><div class="meta">Mock exam result</div>
+      <div class="score ${pass ? "pass" : "fail"}">${pct}%</div>
+      <p><b>${pass ? "PASS ✅" : "Not yet ❌"}</b> · ${s.right} of ${s.items.length} correct (need ${PASS_PCT}%)</p></div>
+    <div class="card"><b>By topic</b>${topics}</div>
+    <div class="card"><b>Review answers</b><p class="meta">Tap any number to see the question and explanation.</p><div class="grid">${dots}</div></div>
+    <button class="btn primary" onclick="go('missed')">Practice missed questions</button>
+    <button class="btn" onclick="go('home')">Back home</button>`;
+}
+
+function reviewExam(i) {
+  const it = session.items[i], q = it.q;
+  const opts = it.order.map((oi, idx) => {
+    let cls = "opt"; if (idx === it.correct) cls += " right"; else if (idx === it.pick) cls += " wrong";
+    return `<button class="${cls}" disabled><span class="k">${L[idx]}</span><span>${esc(q.o[oi])}</span></button>`;
+  }).join("");
+  const ok = it.pick === it.correct;
+  $app.innerHTML = `<div class="row"><span class="tag">${TOPICS[q.t]}</span><span class="meta">Question ${i + 1}</span></div>
+    <div class="q">${esc(q.q)}</div>${opts}
+    <div class="explain ${ok ? "good" : "bad"}"><b>${ok ? "You got this right" : it.pick === null ? "Unanswered. Answer: " + L[it.correct] : "Answer: " + L[it.correct]}</b>${esc(q.e)}</div>
+    <div class="nav"><button class="btn" onclick="renderExamResult()">← Results</button>
+    ${i + 1 < session.items.length ? `<button class="btn primary" onclick="reviewExam(${i + 1})">Next →</button>` : ""}</div>`;
+  window.scrollTo(0, 0);
+}
+
+// ---------- Progress ----------
+function progress() {
+  const rows = Object.entries(TOPICS).map(([k, name]) => {
+    const qs = QUESTIONS.filter(q => q.t === k);
+    let c = 0, n = 0, seen = 0;
+    qs.forEach(q => { const s = stats[q.id]; if (s) { seen++; c += s.c; n += s.c + s.w; } });
+    const pct = n ? Math.round(c / n * 100) : 0;
+    return `<div style="margin:12px 0"><div class="row"><span>${name}</span><span class="meta">${n ? pct + "% correct" : "not started"} · ${seen}/${qs.length} seen</span></div>
+      <div class="bar"><div style="width:${pct}%;background:${pct >= 70 ? "var(--good)" : pct ? "var(--amber)" : "var(--line)"}"></div></div></div>`;
+  }).join("");
+  const exams = history.slice().reverse().map(h => {
+    const pct = Math.round(h.score / h.total * 100);
+    return `<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><span>${new Date(h.date).toLocaleDateString()}</span>
+      <b class="${pct >= PASS_PCT ? "pass" : "fail"}">${pct}%</b></div>`;
+  }).join("");
+  $app.innerHTML = `<div class="card"><b>Accuracy by topic</b>${rows}</div>
+    <div class="card"><b>Mock exams</b>${exams || `<p class="meta">No mock exams yet.</p>`}</div>
+    <button class="btn" onclick="resetAll()">Reset all progress</button>`;
+}
+
+function resetAll() {
+  if (!confirmReset()) return;
+  stats = {}; history = []; store.set("p107_stats", stats); store.set("p107_exams", history); go("home");
+}
+function confirmReset() { return window.confirm ? window.confirm("Erase all progress and exam history?") : true; }
+
+go("home");
+</script>
+</body>
+</html>
